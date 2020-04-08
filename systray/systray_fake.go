@@ -5,7 +5,7 @@ package systray
 
 import "os"
 
-func (s *Systray) Start() {
+func (s *Systray) run() {
 	select {}
 }
 

@@ -18,44 +18,57 @@ type Systray struct {
 	DebugURL func() string
 	// The active configuration file
 	AdditionalConfig string
+
+	// A channel that listens for restart signals
+	restartCh chan string
+
 	// The path of the exe (only used in update)
 	path string
+}
+
+func (s *Systray) Start() {
+	s.restartCh = make(chan string)
+
+	go func() {
+		path := <-s.restartCh
+
+		if path == "" {
+			var err error
+			path, err = osext.Executable()
+			if err != nil {
+				fmt.Printf("Error getting exe path using osext lib. err: %v\n", err)
+			}
+		}
+
+		// Trim newlines (needed on osx)
+		path = strings.Trim(path, "\n")
+
+		// Build args
+		args := []string{"-ls", fmt.Sprintf("--hibernate=%v", s.Hibernate)}
+
+		if s.AdditionalConfig != "" {
+			args = append(args, fmt.Sprintf("--additional-config=%s", s.AdditionalConfig))
+		}
+
+		// Launch executable
+		cmd := exec.Command(path, args...)
+		err := cmd.Start()
+		if err != nil {
+			fmt.Printf("Error restarting process: %v\n", err)
+			return
+		}
+
+		// If everything was fine, quit
+		s.Quit()
+	}()
+
+	s.run()
 }
 
 // Restart restarts the program
 // it works by finding the executable path and launching it before quitting
 func (s *Systray) Restart() {
-
-	fmt.Println(s.path)
-	fmt.Println(osext.Executable())
-	if s.path == "" {
-		var err error
-		s.path, err = osext.Executable()
-		if err != nil {
-			fmt.Printf("Error getting exe path using osext lib. err: %v\n", err)
-		}
-	}
-
-	// Trim newlines (needed on osx)
-	s.path = strings.Trim(s.path, "\n")
-
-	// Build args
-	args := []string{"-ls", fmt.Sprintf("--hibernate=%v", s.Hibernate)}
-
-	if s.AdditionalConfig != "" {
-		args = append(args, fmt.Sprintf("--additional-config=%s", s.AdditionalConfig))
-	}
-
-	// Launch executable
-	cmd := exec.Command(s.path, args...)
-	err := cmd.Start()
-	if err != nil {
-		fmt.Printf("Error restarting process: %v\n", err)
-		return
-	}
-
-	// If everything was fine, quit
-	s.Quit()
+	s.restartCh <- s.path
 }
 
 // Pause restarts the program with the hibernate flag set to true

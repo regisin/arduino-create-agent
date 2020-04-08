@@ -15,8 +15,8 @@ import (
 	"github.com/skratchdot/open-golang/open"
 )
 
-// Start sets up the systray icon with its menus
-func (s *Systray) Start() {
+// Run sets up the systray icon with its menus
+func (s *Systray) run() {
 	if s.Hibernate {
 		systray.Run(s.startHibernate, s.end)
 	} else {
