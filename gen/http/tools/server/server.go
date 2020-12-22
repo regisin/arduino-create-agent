@@ -106,7 +106,7 @@ func NewAvailableHandler(
 ) http.Handler {
 	var (
 		encodeResponse = EncodeAvailableResponse(enc)
-		encodeError    = goahttp.ErrorEncoder(enc)
+		encodeError    = goahttp.ErrorEncoder(enc, nil)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
@@ -150,7 +150,7 @@ func NewInstalledHandler(
 ) http.Handler {
 	var (
 		encodeResponse = EncodeInstalledResponse(enc)
-		encodeError    = goahttp.ErrorEncoder(enc)
+		encodeError    = goahttp.ErrorEncoder(enc, nil)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
@@ -195,7 +195,7 @@ func NewInstallHandler(
 	var (
 		decodeRequest  = DecodeInstallRequest(mux, dec)
 		encodeResponse = EncodeInstallResponse(enc)
-		encodeError    = goahttp.ErrorEncoder(enc)
+		encodeError    = goahttp.ErrorEncoder(enc, nil)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
@@ -247,7 +247,7 @@ func NewRemoveHandler(
 	var (
 		decodeRequest  = DecodeRemoveRequest(mux, dec)
 		encodeResponse = EncodeRemoveResponse(enc)
-		encodeError    = goahttp.ErrorEncoder(enc)
+		encodeError    = goahttp.ErrorEncoder(enc, nil)
 	)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), goahttp.AcceptTypeKey, r.Header.Get("Accept"))
