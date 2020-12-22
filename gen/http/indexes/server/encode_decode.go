@@ -32,7 +32,7 @@ func EncodeListResponse(encoder func(context.Context, http.ResponseWriter) goaht
 // EncodeListError returns an encoder for errors returned by the list indexes
 // endpoint.
 func EncodeListError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, error) error {
-	encodeError := goahttp.ErrorEncoder(encoder)
+	encodeError := goahttp.ErrorEncoder(encoder, nil)
 	return func(ctx context.Context, w http.ResponseWriter, v error) error {
 		en, ok := v.(ErrorNamer)
 		if !ok {
@@ -92,7 +92,7 @@ func DecodeAddRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Dec
 // EncodeAddError returns an encoder for errors returned by the add indexes
 // endpoint.
 func EncodeAddError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, error) error {
-	encodeError := goahttp.ErrorEncoder(encoder)
+	encodeError := goahttp.ErrorEncoder(encoder, nil)
 	return func(ctx context.Context, w http.ResponseWriter, v error) error {
 		en, ok := v.(ErrorNamer)
 		if !ok {
@@ -152,7 +152,7 @@ func DecodeRemoveRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.
 // EncodeRemoveError returns an encoder for errors returned by the remove
 // indexes endpoint.
 func EncodeRemoveError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, error) error {
-	encodeError := goahttp.ErrorEncoder(encoder)
+	encodeError := goahttp.ErrorEncoder(encoder, nil)
 	return func(ctx context.Context, w http.ResponseWriter, v error) error {
 		en, ok := v.(ErrorNamer)
 		if !ok {
